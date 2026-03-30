@@ -27,7 +27,7 @@ noteRouter.openapi(
     request: {
       body: {
         content: {
-          "multipart/form-data": {
+          "application/json": {
             schema: createNoteSchema,
           },
         },
@@ -49,9 +49,8 @@ noteRouter.openapi(
       401: { description: "Unauthorized - invalid or missing token" },
     },
   }),
-  noteController.createNote, // ✅ authMiddleware runs BEFORE this (via .use())
+  noteController.createNote,
 );
-noteRouter.post("/", noteController.createNote);
 // 🔹 Get All Notes
 noteRouter.openapi(
   createRoute({

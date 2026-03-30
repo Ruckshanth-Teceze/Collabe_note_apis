@@ -51,7 +51,7 @@ app.get(
   "/api/reference",
   apiReference({
     spec: {
-      url: "/openapi.json",
+      url: "/api/reference/openapi.json",
     },
     authentication: {
       preferredSecurityScheme: "bearerAuth",

@@ -7,7 +7,7 @@ import { userServices } from "./user.service.js";
 import { fileService } from "./file.service.js";
 
 export class NoteServices {
-  async noteCreate(userId: string, noteInput: createNoteDto, file?: unknown) {
+  async noteCreate(userId: string, noteInput: createNoteDto) {
     const noteData: NewNote = {
       title: noteInput.title || "Untitled",
       content: noteInput.content,
@@ -27,13 +27,7 @@ export class NoteServices {
     }
 
     const note = await noteRepositories.create(noteData);
-    if (file) {
-      // const attachment = await fileService.attachmentCreate(
-      //   userId,
-      //   note?.id ?? "",
-      //   file,
-      // );
-    }
+
     if (!note) {
       throw new Error("Note Create failed");
     }

@@ -3,13 +3,6 @@ import z from "zod";
 export const createNoteSchema = z.object({
   title: z.string(),
   content: z.string(),
-  fileMetadata: z
-    .object({
-      filename: z.string(),
-      mimeType: z.string(),
-      size: z.number(),
-    })
-    .optional(),
 });
 
 export const updateNoteSchema = z.object({

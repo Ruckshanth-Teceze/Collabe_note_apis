@@ -15,6 +15,13 @@
       "when": 1774330981335,
       "tag": "0001_sweet_calypso",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1774865546191,
+      "tag": "0002_sour_mimic",
+      "breakpoints": true
     }
   ]
 }
