@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  # 🟢 Database Service
+  db:
+    image: postgres:15-alpine
+    container_name: note_db
+    restart: always
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+  # 🔵 API Service (Hono)
+  api:
+    build: .
+    container_name: note_api
+    restart: always
+    # REMOVE network_mode: host
+    ports:
+      - "3000:3000"  # ✅ This maps container port 3000 to your machine's port 3000
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - HOST=0.0.0.0 
+      - DB_HOST=db
+      - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME}
+    depends_on:
+      - db
+    networks:
+      - app-network  # ✅ This ensures API can talk to 'db'
+
+volumes:
+  pgdata:
+
+networks:
+  app-network:
+    driver: bridge
+    
