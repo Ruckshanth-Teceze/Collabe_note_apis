@@ -109,8 +109,6 @@ export const attachments = pgTable(
     filename: varchar("filename", { length: 500 }).notNull(),
     mimeType: varchar("mime_type", { length: 100 }).notNull(),
     size: integer("size").notNull(),
-    s3Key: text("s3_key").notNull(),
-    s3Bucket: text("s3_bucket").notNull(),
     uploadedBy: uuid("uploaded_by")
       .notNull()
       .references(() => users.id),
