@@ -36,7 +36,7 @@ app.openAPIRegistry.registerComponent("securitySchemes", "bearerAuth", {
 });
 
 // 1. Setup the OpenAPI JSON endpoint
-app.doc("/openapi.json", {
+app.doc("api/reference/openapi.json", {
   openapi: "3.0.0",
   info: {
     title: "Basic Crud Apis",
