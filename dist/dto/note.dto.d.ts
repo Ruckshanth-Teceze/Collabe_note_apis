@@ -1,12 +1,7 @@
 import z from "zod";
 export declare const createNoteSchema: z.ZodObject<{
-    title: z.ZodDefault<z.ZodString>;
-    content: z.ZodOptional<z.ZodString>;
-    fileMetadata: z.ZodOptional<z.ZodObject<{
-        filename: z.ZodString;
-        mimeType: z.ZodString;
-        size: z.ZodNumber;
-    }, z.z.core.$strip>>;
+    title: z.ZodString;
+    content: z.ZodString;
 }, z.z.core.$strip>;
 export declare const updateNoteSchema: z.ZodObject<{
     title: z.ZodDefault<z.ZodString>;

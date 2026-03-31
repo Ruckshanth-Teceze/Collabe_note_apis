@@ -1,9 +1,7 @@
 import z from "zod";
-import { fileMetadataSchema } from "./file.dto.js";
 export const createNoteSchema = z.object({
-    title: z.string().max(500).default("Untitled"),
-    content: z.string().optional(),
-    fileMetadata: fileMetadataSchema.optional(),
+    title: z.string(),
+    content: z.string(),
 });
 export const updateNoteSchema = z.object({
     title: z.string().max(500).default("Untitled"),

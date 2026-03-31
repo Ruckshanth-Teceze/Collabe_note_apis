@@ -1,8 +1,8 @@
 import z from "zod";
 
 export const FileCreateSchema = z.object({
-  noteId: z.string().uuid("Invalid Note ID format"),
-  fileMetaData: z.any(),
+  noteId: z.string().uuid(),
+  file: z.any(),
 });
 
 export const fileSchema = z.object({

@@ -6,6 +6,9 @@ import { apiReference } from "@scalar/hono-api-reference";
 import "dotenv/config";
 import authRouter from "./routes/auth.route.js";
 import noteRouter from "./routes/note.route.js";
+import fileRouter from "./routes/file.route.js";
+import { BUCKET, s3 } from "./middlewares/file.middleware.js";
+import { CreateBucketCommand, HeadBucketCommand } from "@aws-sdk/client-s3";
 const app = new OpenAPIHono();
 const PORT = parseInt(process.env.PORT || "4000");
 // ✅ Middleware
@@ -19,13 +22,14 @@ app.get("/health-check", (c) => c.json({ success: true, message: "Server is heal
 app.get("/", (c) => c.text("Hello Hono!"));
 app.route("/api/v1/auth", authRouter);
 app.route("/api/v1/notes", noteRouter);
+app.route("/api/v1/files", fileRouter);
 app.openAPIRegistry.registerComponent("securitySchemes", "bearerAuth", {
     type: "http",
     scheme: "bearer",
     bearerFormat: "JWT",
 });
 // 1. Setup the OpenAPI JSON endpoint
-app.doc("/openapi.json", {
+app.doc("api/reference/openapi.json", {
     openapi: "3.0.0",
     info: {
         title: "Basic Crud Apis",
@@ -37,7 +41,7 @@ app.doc("/openapi.json", {
 // 2. Setup the Scalar UI (Modern alternative to Swagger)
 app.get("/api/reference", apiReference({
     spec: {
-        url: "/openapi.json",
+        url: "/api/reference/openapi.json",
     },
     authentication: {
         preferredSecurityScheme: "bearerAuth",
@@ -61,5 +65,15 @@ async function startserver() {
         process.exit(1);
     }
 }
+async function ensureBucket() {
+    try {
+        await s3.send(new HeadBucketCommand({ Bucket: BUCKET }));
+    }
+    catch {
+        await s3.send(new CreateBucketCommand({ Bucket: BUCKET }));
+        console.log(`Created bucket: ${BUCKET}`);
+    }
+}
 startserver();
+ensureBucket();
 //# sourceMappingURL=index.js.map

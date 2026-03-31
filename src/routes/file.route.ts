@@ -1,5 +1,5 @@
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
-import { FileCreateSchema, fileSchema } from "../dto/file.dto.js";
+import { FileCreateSchema } from "../dto/file.dto.js";
 import { fileController } from "../controllers/file.controller.js";
 import { authMiddleware } from "../middlewares/auth.middleware.js";
 
@@ -19,10 +19,7 @@ fileRouter.openapi(
       body: {
         content: {
           "multipart/form-data": {
-            schema: z.object({
-              noteId: z.string().uuid(),
-              file: z.any(),
-            }),
+            schema: FileCreateSchema,
           },
         },
       },

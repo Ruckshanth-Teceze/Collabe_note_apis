@@ -4,7 +4,6 @@ import { noteController } from "../controllers/note.controller.js";
 import { authMiddleware } from "../middlewares/auth.middleware.js";
 import { createNoteSchema, IdParamSchema, noteSchema, updateNoteSchema, } from "../dto/note.dto.js";
 const noteRouter = new OpenAPIHono();
-// 🔐 Apply auth middleware to ALL note routes (they're all protected)
 noteRouter.use("*", authMiddleware);
 // 🔹 Create Note
 noteRouter.openapi(createRoute({

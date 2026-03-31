@@ -571,6 +571,23 @@ export declare const attachments: import("drizzle-orm/pg-core").PgTableWithColum
         }, {}, {
             length: 100;
         }>;
+        storageKey: import("drizzle-orm/pg-core").PgColumn<{
+            name: "storage_key";
+            tableName: "attachments";
+            dataType: "string";
+            columnType: "PgText";
+            data: string;
+            driverParam: string;
+            notNull: true;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: [string, ...string[]];
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {}>;
         size: import("drizzle-orm/pg-core").PgColumn<{
             name: "size";
             tableName: "attachments";
@@ -584,40 +601,6 @@ export declare const attachments: import("drizzle-orm/pg-core").PgTableWithColum
             isAutoincrement: false;
             hasRuntimeDefault: false;
             enumValues: undefined;
-            baseColumn: never;
-            identity: undefined;
-            generated: undefined;
-        }, {}, {}>;
-        s3Key: import("drizzle-orm/pg-core").PgColumn<{
-            name: "s3_key";
-            tableName: "attachments";
-            dataType: "string";
-            columnType: "PgText";
-            data: string;
-            driverParam: string;
-            notNull: true;
-            hasDefault: false;
-            isPrimaryKey: false;
-            isAutoincrement: false;
-            hasRuntimeDefault: false;
-            enumValues: [string, ...string[]];
-            baseColumn: never;
-            identity: undefined;
-            generated: undefined;
-        }, {}, {}>;
-        s3Bucket: import("drizzle-orm/pg-core").PgColumn<{
-            name: "s3_bucket";
-            tableName: "attachments";
-            dataType: "string";
-            columnType: "PgText";
-            data: string;
-            driverParam: string;
-            notNull: true;
-            hasDefault: false;
-            isPrimaryKey: false;
-            isAutoincrement: false;
-            hasRuntimeDefault: false;
-            enumValues: [string, ...string[]];
             baseColumn: never;
             identity: undefined;
             generated: undefined;

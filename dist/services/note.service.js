@@ -3,7 +3,7 @@ import { noteRepositories } from "../repositories/note.repo.js";
 import { userRepository } from "../repositories/user.repo.js";
 import { userServices } from "./user.service.js";
 export class NoteServices {
-    async noteCreate(userId, noteInput, file) {
+    async noteCreate(userId, noteInput) {
         const noteData = {
             title: noteInput.title || "Untitled",
             content: noteInput.content,
@@ -20,13 +20,6 @@ export class NoteServices {
             throw new Error("Note already exist");
         }
         const note = await noteRepositories.create(noteData);
-        if (file) {
-            // const attachment = await fileService.attachmentCreate(
-            //   userId,
-            //   note?.id ?? "",
-            //   file,
-            // );
-        }
         if (!note) {
             throw new Error("Note Create failed");
         }

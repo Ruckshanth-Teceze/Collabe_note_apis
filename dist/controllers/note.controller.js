@@ -1,33 +1,19 @@
 import { ZodError } from "zod";
-import { fileMetadataSchema } from "../dto/file.dto.js";
 import { noteServices } from "../services/note.service.js";
 import { createNoteSchema, updateNoteSchema } from "../dto/note.dto.js";
 export class NoteController {
     async createNote(c) {
         try {
             const userId = await c.get("userId");
-            const formData = await c.req.formData();
-            const title = formData.get("title") || "Untitled";
-            const content = formData.get("content") || undefined;
-            const file = formData.get("file");
-            let fileMetadata = undefined;
-            if (file) {
-                fileMetadata = fileMetadataSchema.parse({
-                    filename: file.name,
-                    mimeType: file.type,
-                    size: file.size,
-                });
-            }
-            const noteInput = { title, content, fileMetadata };
-            if (fileMetadata)
-                noteInput.fileMetadata = fileMetadata;
+            const noteInput = await c.req.json();
             const validateNote = createNoteSchema.parse(noteInput);
-            const result = await noteServices.noteCreate(userId || "", validateNote, file);
+            const result = await noteServices.noteCreate(userId || "", validateNote);
             return c.json({ success: true, result }, 201);
         }
         catch (error) {
             if (error instanceof ZodError) {
-                return c.json({ success: false, message: error.issues }, 400);
+                console.log("ZodError:", error.issues);
+                return c.json({ success: false, message: error.message }, 400);
             }
             if (error instanceof Error) {
                 return c.json({ success: false, message: error.message }, 400);

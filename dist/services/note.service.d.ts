@@ -1,6 +1,6 @@
 import { createNoteDto, updateNoteDto } from "../dto/note.dto.js";
 export declare class NoteServices {
-    noteCreate(userId: string, noteInput: createNoteDto, file?: unknown): Promise<{
+    noteCreate(userId: string, noteInput: createNoteDto): Promise<{
         userRole: string;
         id: string;
         createdAt: Date;
