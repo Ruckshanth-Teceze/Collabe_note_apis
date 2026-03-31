@@ -11,8 +11,6 @@ import {
 } from "../dto/note.dto.js";
 
 const noteRouter = new OpenAPIHono();
-
-// 🔐 Apply auth middleware to ALL note routes (they're all protected)
 noteRouter.use("*", authMiddleware);
 
 // 🔹 Create Note

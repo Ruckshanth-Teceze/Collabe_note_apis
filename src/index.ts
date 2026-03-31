@@ -7,6 +7,7 @@ import "dotenv/config";
 
 import authRouter from "./routes/auth.route.js";
 import noteRouter from "./routes/note.route.js";
+import fileRouter from "./routes/file.route.js";
 
 const app = new OpenAPIHono();
 const PORT = parseInt(process.env.PORT || "4000");
@@ -28,6 +29,7 @@ app.get("/health-check", (c) =>
 app.get("/", (c) => c.text("Hello Hono!"));
 app.route("/api/v1/auth", authRouter);
 app.route("/api/v1/notes", noteRouter);
+app.route("/api/v1/files", fileRouter);
 
 app.openAPIRegistry.registerComponent("securitySchemes", "bearerAuth", {
   type: "http",

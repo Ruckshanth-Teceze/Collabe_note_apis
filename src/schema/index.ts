@@ -108,6 +108,7 @@ export const attachments = pgTable(
       .references(() => notes.id, { onDelete: "cascade" }),
     filename: varchar("filename", { length: 500 }).notNull(),
     mimeType: varchar("mime_type", { length: 100 }).notNull(),
+    storageKey: text("storage_key").notNull(),
     size: integer("size").notNull(),
     uploadedBy: uuid("uploaded_by")
       .notNull()
