@@ -1,5 +1,10 @@
 import z from "zod";
 
+export const shareNoteSchema = z.object({
+  userId: z.string().uuid("Invalid UUID format"),
+  noteId: z.string().uuid("Invalid UUID format"),
+});
+
 export const createNoteSchema = z.object({
   title: z.string(),
   content: z.string(),

@@ -14,6 +14,8 @@ export class NoteRepositories {
     const [note] = await db.insert(notes).values(noteData).returning();
     return note;
   }
+  
+
   async findById(noteId: string): Promise<Note> {
     const [note] = await db
       .select()

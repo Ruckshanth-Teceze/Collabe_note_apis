@@ -7,6 +7,7 @@ import {
   createNoteSchema,
   IdParamSchema,
   noteSchema,
+  shareNoteSchema,
   updateNoteSchema,
 } from "../dto/note.dto.js";
 
@@ -49,6 +50,44 @@ noteRouter.openapi(
   }),
   noteController.createNote,
 );
+
+// 🔹 share Note
+noteRouter.openapi(
+  createRoute({
+    method: "post",
+    path: "/share",
+    tags: ["Notes"],
+    summary: "Share a new note",
+    description: "Share a note for the authenticated user",
+    security: [{ bearerAuth: [] }], // 🔑 Shows lock icon in Scalar
+    request: {
+      body: {
+        content: {
+          "application/json": {
+            schema: shareNoteSchema,
+          },
+        },
+      },
+    },
+    responses: {
+      201: {
+        description: "Note shared successfully",
+        content: {
+          "application/json": {
+            schema: z.object({
+              success: z.boolean(),
+              result: noteSchema, // ✅ Reuse your note schema
+            }),
+          },
+        },
+      },
+      400: { description: "Validation error" },
+      401: { description: "Unauthorized - invalid or missing token" },
+    },
+  }),
+  noteController.shareNote,
+);
+
 // 🔹 Get All Notes
 noteRouter.openapi(
   createRoute({

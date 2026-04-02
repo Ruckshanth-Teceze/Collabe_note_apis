@@ -128,16 +128,23 @@ export class FileService {
     // Get all attachments for the note
     const attachments = await fileRepository.getAttachmentsByNoteId(noteId);
 
-    return attachments.map((attachment) => ({
-      id: attachment.id,
-      filename: attachment.filename,
-      mimeType: attachment.mimeType,
-      size: attachment.size,
-      noteId: attachment.noteId,
-      storageKey: attachment.storageKey,
-      uploadedBy: attachment.uploadedBy,
-      createdAt: attachment.createdAt.toISOString(),
-    }));
+    // Generate presigned URL for each attachment
+    const filesWithUrls = await Promise.all(
+      attachments.map(async (attachment) => {
+        const command = new GetObjectCommand({
+          Bucket: BUCKET,
+          Key: attachment.storageKey,
+        });
+        const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
+        return {
+          attachmentId: attachment.id,
+          filename: attachment.filename,
+          url: url,
+        };
+      }),
+    );
+
+    return filesWithUrls;
   }
 
   async deleteFile(userId: string, attachmentId: string) {

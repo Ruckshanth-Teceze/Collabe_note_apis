@@ -44,6 +44,30 @@ export class NoteServices {
     };
   }
 
+  async shareCreate(userId: string, noteId: string) {
+    const existNote = await noteRepositories.findById(noteId);
+    if (!existNote) {
+      throw new Error("Note doesn't exist");
+    }
+
+    // const note = await noteRepositories.share(noteData);
+
+    // if (!note) {
+    //   throw new Error("Note Create failed");
+    // }
+
+    await userServices.permissionCreate({
+      noteId: existNote.id,
+      userId,
+      role: "EDITOR",
+    });
+
+    return {
+      ...existNote,
+      userRole: "EDITOR",
+    };
+  }
+
   async noteUpdate(userId: string, noteId: string, noteInput: updateNoteDto) {
     const permission = await userServices.permissionGet(noteId, userId);
     if (!permission) {
@@ -91,17 +115,28 @@ export class NoteServices {
       throw Error("User permission failed");
     }
     const note = await noteRepositories.findById(noteId);
+    const files = await fileService.getFilesByNoteId(userId, noteId);
     return {
       ...note,
       userRole: userPermission.role,
+      files,
     };
   }
 
   async noteGets(userId: string) {
-    const note = await noteRepositories.findByOwnerId(userId);
-    return {
-      ...note,
-    };
+    const notes = await noteRepositories.findByOwnerId(userId);
+
+    const notesWithAttachments = await Promise.all(
+      notes.map(async (note) => {
+        const attachments = await fileService.getFilesByNoteId(userId, note.id);
+        return {
+          ...note,
+          attachments,
+        };
+      }),
+    );
+
+    return notesWithAttachments;
   }
 
   async noteDelete(userId: string, noteId: string) {
