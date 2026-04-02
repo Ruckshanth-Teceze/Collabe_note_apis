@@ -1,5 +1,6 @@
 import { randomUUID } from "crypto";
 import { fileRepository } from "../repositories/file.repo.js";
+import { noteRepositories } from "../repositories/note.repo.js";
 import { userRepository } from "../repositories/user.repo.js";
 import { BUCKET, s3 } from "../middlewares/file.middleware.js";
 import {
@@ -11,14 +12,20 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 export class FileService {
   async attachmentCreate(userId: string, noteId: string, file: File) {
-    // Check user permission
+    // Check user permission - either from permissions table or note owner
     const userPermission = await userRepository.getPermission(noteId, userId);
-    if (!userPermission) {
+    const note = await noteRepositories.findById(noteId);
+
+    // Allow access if user has permission OR is the note owner
+    if (!userPermission && (!note || note.ownerId !== userId)) {
       throw Error("User permission failed - no access to this note");
     }
 
     // Only OWNER and EDITOR can upload files
-    if (!["OWNER", "EDITOR"].includes(userPermission.role)) {
+    // Note owners always have implicit OWNER permission
+    const effectiveRole =
+      userPermission?.role || (note?.ownerId === userId ? "OWNER" : null);
+    if (!["OWNER", "EDITOR"].includes(effectiveRole!)) {
       throw Error(
         "Insufficient permissions - only owners and editors can upload files",
       );
@@ -53,7 +60,7 @@ export class FileService {
         Bucket: BUCKET,
         Key: storageKey,
         Body: fileBuffer,
-        ContentType: file.type || "application/octet-stream",
+        ContentType: file.type,
         Metadata: {
           uploadedBy: userId,
           originalName: file.name,
@@ -65,7 +72,7 @@ export class FileService {
     const attachmentData = {
       noteId: noteId,
       filename: file.name,
-      mimeType: file.type || "application/octet-stream",
+      mimeType: file.type,
       storageKey: storageKey,
       size: file.size,
       uploadedBy: userId,
@@ -112,14 +119,17 @@ export class FileService {
       Key: attachment.storageKey,
     });
 
-    const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
+    const url = await getSignedUrl(s3, command);
     return url;
   }
 
   async getFilesByNoteId(userId: string, noteId: string) {
-    // Check user permission
+    // Check user permission - either from permissions table or note owner
     const userPermission = await userRepository.getPermission(noteId, userId);
-    if (!userPermission) {
+    const note = await noteRepositories.findById(noteId);
+
+    // Allow access if user has permission OR is the note owner
+    if (!userPermission && (!note || note.ownerId !== userId)) {
       throw Error(
         "Access denied - you don't have permission to view files for this note",
       );
@@ -135,7 +145,7 @@ export class FileService {
           Bucket: BUCKET,
           Key: attachment.storageKey,
         });
-        const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
+        const url = await getSignedUrl(s3, command);
         return {
           attachmentId: attachment.id,
           filename: attachment.filename,

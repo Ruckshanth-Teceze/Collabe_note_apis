@@ -59,7 +59,7 @@ services:
 
 volumes:
   pgdata:
-  minio_data:  # ✅ Added
+  minio_data:  
 
 networks:
   app-network:

@@ -95,20 +95,23 @@ export class NoteServices {
             throw Error("User permission failed");
         }
         const note = await noteRepositories.findById(noteId);
+        const files = await fileService.getFilesByNoteId(userId, noteId);
         return {
             ...note,
             userRole: userPermission.role,
+            files,
         };
     }
     async noteGets(userId) {
-        const note = await noteRepositories.findByOwnerId(userId);
-        const noteAttachments = note.map((note) => {
-            return fileService.getFilesByNoteId(userId, note.id);
-        });
-        return {
-            ...note,
-            attachments: noteAttachments,
-        };
+        const notes = await noteRepositories.findByOwnerId(userId);
+        const notesWithAttachments = await Promise.all(notes.map(async (note) => {
+            const attachments = await fileService.getFilesByNoteId(userId, note.id);
+            return {
+                ...note,
+                attachments,
+            };
+        }));
+        return notesWithAttachments;
     }
     async noteDelete(userId, noteId) {
         const userPermission = await userRepository.getPermission(noteId, userId);
