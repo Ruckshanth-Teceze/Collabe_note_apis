@@ -36,11 +36,29 @@ export class NoteController {
       const validateShareNote = shareNoteSchema.parse(shareNote);
 
       const result = await noteServices.shareCreate(
-        validateShareNote.userId ?? "",
         validateShareNote.noteId ?? "",
+        validateShareNote.userIds ?? [],
       );
 
       return c.json({ success: true, result }, 201);
+    } catch (error) {
+      if (error instanceof ZodError) {
+        console.log("ZodError:", error.issues);
+        return c.json({ success: false, message: error.message }, 400);
+      }
+      if (error instanceof Error) {
+        return c.json({ success: false, message: error.message }, 400);
+      }
+      return c.json({ success: false, message: "Internal server error" }, 500);
+    }
+  }
+
+  async getSharedNotes(c: Context) {
+    try {
+      const userId = await c.get("userId");
+      const result = await noteServices.getSharedNotes(userId ?? "");
+
+      return c.json({ success: true, result }, 200);
     } catch (error) {
       if (error instanceof ZodError) {
         console.log("ZodError:", error.issues);

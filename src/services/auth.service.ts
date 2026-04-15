@@ -13,6 +13,13 @@ interface authResponse {
   token?: string;
 }
 
+interface userResponse {
+  userId: string;
+  name: string | null;
+  email: string;
+  createdAt?: Date;
+}
+
 export class AuthServices {
   async userRegister(validUser: registerDto): Promise<authResponse> {
     const existUser = await authRepository.findByEmail(validUser.email);
@@ -79,6 +86,23 @@ export class AuthServices {
         createdAt: user.createdAt,
       },
     };
+  }
+
+  async getUsers(): Promise<userResponse[]> {
+    const users = await authRepository.findAll();
+
+    if (!users) {
+      throw new Error("Users not found");
+    }
+
+    return users.map((u) => {
+      return {
+        userId: u.id,
+        name: u.name,
+        email: u.email,
+        createdAt: u.createdAt,
+      };
+    });
   }
 }
 export const authServices = new AuthServices();

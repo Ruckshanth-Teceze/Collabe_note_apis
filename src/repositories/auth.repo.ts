@@ -17,6 +17,11 @@ export class AuthRepository {
     const [user] = await db.select().from(users).where(eq(users.id, userId));
     return user || null;
   }
+
+  async findAll(): Promise<User[] | null> {
+    const user = await db.select().from(users);
+    return user || [];
+  }
 }
 
 export const authRepository = new AuthRepository();

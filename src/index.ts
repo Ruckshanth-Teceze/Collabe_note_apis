@@ -8,6 +8,7 @@ import "dotenv/config";
 import authRouter from "./routes/auth.route.js";
 import noteRouter from "./routes/note.route.js";
 import fileRouter from "./routes/file.route.js";
+import mailRouter from "./routes/mail.route.js";
 
 const app = new OpenAPIHono();
 const PORT = parseInt(process.env.PORT || "4000");
@@ -30,6 +31,8 @@ app.get("/", (c) => c.text("Hello Hono!"));
 app.route("/api/v1/auth", authRouter);
 app.route("/api/v1/notes", noteRouter);
 app.route("/api/v1/files", fileRouter);
+app.route("/api/v1/mail", mailRouter);
+
 
 app.openAPIRegistry.registerComponent("securitySchemes", "bearerAuth", {
   type: "http",

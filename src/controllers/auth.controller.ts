@@ -43,8 +43,24 @@ export class AuthController {
   async getCurrentUser(c: Context) {
     try {
       const userId = c.get("userId");
-      
+
       const result = await authServices.getuserData(userId || "");
+
+      return c.json({ success: true, result }, 200);
+    } catch (error) {
+      if (error instanceof ZodError) {
+        return c.json({ success: false, message: error.issues }, 400);
+      }
+      if (error instanceof Error) {
+        return c.json({ success: false, message: error.message }, 400);
+      }
+      return c.json({ success: false, message: "Internal server error" }, 500);
+    }
+  }
+
+  async getAllUser(c: Context) {
+    try {
+      const result = await authServices.getUsers();
 
       return c.json({ success: true, result }, 200);
     } catch (error) {

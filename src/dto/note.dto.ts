@@ -1,7 +1,7 @@
 import z from "zod";
 
 export const shareNoteSchema = z.object({
-  userId: z.string().uuid("Invalid UUID format"),
+  userIds: z.array(z.string().uuid("Invalid UUID format")).min(1),
   noteId: z.string().uuid("Invalid UUID format"),
 });
 

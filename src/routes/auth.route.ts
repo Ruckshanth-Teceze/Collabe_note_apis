@@ -108,5 +108,36 @@ authRouter.openapi(
   }),
   authController.getCurrentUser, // ✅ authMiddleware runs BEFORE this
 );
+authRouter.use("/users", authMiddleware);
+
+authRouter.openapi(
+  createRoute({
+    method: "get",
+    path: "/users",
+    tags: ["Authentication"],
+    summary: "Get all the users",
+    security: [{ bearerAuth: [] }], // 🔑 Reference the security scheme in OpenAPI
+    responses: {
+      200: {
+        description: "Current user data",
+        content: {
+          "application/json": {
+            schema: z.object({
+              success: z.boolean(),
+              user: z.object({
+                id: z.string(),
+                email: z.string(),
+                name: z.string().nullable(),
+                createdAt: z.string().datetime(),
+              }),
+            }),
+          },
+        },
+      },
+      401: { description: "Unauthorized" },
+    },
+  }),
+  authController.getAllUser, // ✅ authMiddleware runs BEFORE this
+);
 
 export default authRouter;
