@@ -43,6 +43,13 @@ export class UserRepository {
             .returning();
         return !!result;
     }
+    async getPermissionsByUserId(userId) {
+        const userPermissions = await db
+            .select()
+            .from(permissions)
+            .where(eq(permissions.userId, userId));
+        return userPermissions;
+    }
 }
 export const userRepository = new UserRepository();
 //# sourceMappingURL=user.repo.js.map

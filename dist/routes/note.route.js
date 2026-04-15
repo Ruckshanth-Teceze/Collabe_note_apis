@@ -43,9 +43,9 @@ noteRouter.openapi(createRoute({
     method: "post",
     path: "/share",
     tags: ["Notes"],
-    summary: "Share a new note",
-    description: "Share a note for the authenticated user",
-    security: [{ bearerAuth: [] }], // 🔑 Shows lock icon in Scalar
+    summary: "Share a note with multiple users",
+    description: "Share a note with multiple users",
+    security: [{ bearerAuth: [] }],
     request: {
         body: {
             content: {
@@ -62,7 +62,7 @@ noteRouter.openapi(createRoute({
                 "application/json": {
                     schema: z.object({
                         success: z.boolean(),
-                        result: noteSchema, // ✅ Reuse your note schema
+                        result: z.array(noteSchema),
                     }),
                 },
             },
@@ -71,6 +71,29 @@ noteRouter.openapi(createRoute({
         401: { description: "Unauthorized - invalid or missing token" },
     },
 }), noteController.shareNote);
+// 🔹 Get Shared Notes
+noteRouter.openapi(createRoute({
+    method: "get",
+    path: "/shared",
+    tags: ["Notes"],
+    summary: "Get notes shared with user",
+    description: "Get all notes that have been shared with the authenticated user",
+    security: [{ bearerAuth: [] }],
+    responses: {
+        200: {
+            description: "List of shared notes",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        success: z.boolean(),
+                        result: z.array(noteSchema),
+                    }),
+                },
+            },
+        },
+        401: { description: "Unauthorized" },
+    },
+}), noteController.getSharedNotes);
 // 🔹 Get All Notes
 noteRouter.openapi(createRoute({
     method: "get",

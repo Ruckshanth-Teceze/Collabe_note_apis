@@ -4,6 +4,7 @@ export declare class UserRepository {
     getPermission(noteId: string, userId: string): Promise<Permission | null>;
     updatePermissionRole(noteId: string, userId: string, role: Role): Promise<Permission | null>;
     deletePermission(noteId: string, userId: string): Promise<boolean>;
+    getPermissionsByUserId(userId: string): Promise<Permission[]>;
 }
 export declare const userRepository: UserRepository;
 //# sourceMappingURL=user.repo.d.ts.map

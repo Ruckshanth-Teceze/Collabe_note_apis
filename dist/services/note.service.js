@@ -34,24 +34,39 @@ export class NoteServices {
             userRole: "OWNER",
         };
     }
-    async shareCreate(userId, noteId) {
+    async shareCreate(noteId, userIds) {
         const existNote = await noteRepositories.findById(noteId);
         if (!existNote) {
             throw new Error("Note doesn't exist");
         }
-        // const note = await noteRepositories.share(noteData);
-        // if (!note) {
-        //   throw new Error("Note Create failed");
-        // }
-        await userServices.permissionCreate({
-            noteId: existNote.id,
-            userId,
-            role: "EDITOR",
-        });
-        return {
-            ...existNote,
-            userRole: "EDITOR",
-        };
+        const sharedResults = await Promise.all(userIds.map(async (userId) => {
+            const permission = await userServices.permissionCreate({
+                noteId: existNote.id,
+                userId,
+                role: "EDITOR",
+            });
+            return {
+                ...existNote,
+                userRole: "EDITOR",
+                permissionId: permission?.id,
+            };
+        }));
+        return sharedResults;
+    }
+    async getSharedNotes(userId) {
+        const userPermissions = await userRepository.getPermissionsByUserId(userId);
+        const noteIds = userPermissions
+            .filter((p) => p.noteId)
+            .map((p) => p.noteId);
+        const sharedNotes = await Promise.all(noteIds.map(async (noteId) => {
+            const note = await noteRepositories.findById(noteId);
+            return note;
+        }));
+        const notesWithRole = userPermissions.map((perm, index) => ({
+            ...sharedNotes[index],
+            userRole: perm.role,
+        }));
+        return notesWithRole.filter(Boolean);
     }
     async noteUpdate(userId, noteId, noteInput) {
         const permission = await userServices.permissionGet(noteId, userId);

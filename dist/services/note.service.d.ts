@@ -11,8 +11,9 @@ export declare class NoteServices {
         currentVersion: number;
         isDeleted: boolean;
     }>;
-    shareCreate(userId: string, noteId: string): Promise<{
+    shareCreate(noteId: string, userIds: string[]): Promise<{
         userRole: string;
+        permissionId: string;
         id: string;
         createdAt: Date;
         updatedAt: Date;
@@ -21,7 +22,18 @@ export declare class NoteServices {
         ownerId: string;
         currentVersion: number;
         isDeleted: boolean;
-    }>;
+    }[]>;
+    getSharedNotes(userId: string): Promise<{
+        userRole: "OWNER" | "EDITOR" | "VIEWER";
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        title: string;
+        content: string | null;
+        ownerId: string;
+        currentVersion: number;
+        isDeleted: boolean;
+    }[]>;
     noteUpdate(userId: string, noteId: string, noteInput: updateNoteDto): Promise<{
         userRole: string;
         id: string;

@@ -1,6 +1,6 @@
 import z from "zod";
 export declare const shareNoteSchema: z.ZodObject<{
-    userId: z.ZodString;
+    userIds: z.ZodArray<z.ZodString>;
     noteId: z.ZodString;
 }, z.z.core.$strip>;
 export declare const createNoteSchema: z.ZodObject<{

@@ -24,6 +24,7 @@ export declare class NoteController {
         success: true;
         result: {
             userRole: string;
+            permissionId: string;
             id: string;
             createdAt: string;
             updatedAt: string;
@@ -32,8 +33,28 @@ export declare class NoteController {
             ownerId: string;
             currentVersion: number;
             isDeleted: boolean;
-        };
+        }[];
     }, 201, "json">) | (Response & import("hono").TypedResponse<{
+        success: false;
+        message: string;
+    }, 400, "json">) | (Response & import("hono").TypedResponse<{
+        success: false;
+        message: string;
+    }, 500, "json">)>;
+    getSharedNotes(c: Context): Promise<(Response & import("hono").TypedResponse<{
+        success: true;
+        result: {
+            userRole: "OWNER" | "EDITOR" | "VIEWER";
+            id: string;
+            createdAt: string;
+            updatedAt: string;
+            title: string;
+            content: string | null;
+            ownerId: string;
+            currentVersion: number;
+            isDeleted: boolean;
+        }[];
+    }, 200, "json">) | (Response & import("hono").TypedResponse<{
         success: false;
         message: string;
     }, 400, "json">) | (Response & import("hono").TypedResponse<{
